@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nusantara Time - Premium Clock & Calculator</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <style>
+        /* --- 1. CORE VARIABLES & RESET --- */
+        :root {
+            --font-main: 'Plus Jakarta Sans', sans-serif;
+            
+            /* Warna Gradasi & Aksen Premium */
+            --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #312e81 100%);
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --glass-highlight: rgba(255, 255, 255, 0.2);
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --accent-gold: #fbbf24;
+            --accent-glow: 0 0 20px rgba(251, 191, 36, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            outline: none;
+        }
+
+ body {
+    font-family: var(--font-main);
+    background: var(--bg-gradient);
+    background-attachment: fixed;
+    color: var(--text-primary);
+    min-height: 100vh;
+    
+    /* TAMBAHAN PENTING: Mencegah layar geser kanan-kiri */
+    width: 100%;
+    overflow-x: hidden; 
+    position: relative;
+}
+
+        /* Elemen Dekoratif (Blobs) untuk kesan artistik */
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            z-index: -1;
+            opacity: 0.6;
+        }
+        .blob-1 { top: -10%; left: -10%; width: 500px; height: 500px; background: #4c1d95; }
+        .blob-2 { bottom: -10%; right: -10%; width: 600px; height: 600px; background: #0ea5e9; }
+        .blob-3 { top: 40%; left: 30%; width: 300px; height: 300px; background: #be185d; opacity: 0.3; }
+
+        /* --- 2. LAYOUT & CONTAINER --- */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 60px;
+            animation: fadeInDown 1s ease-out;
+        }
+
+        h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            letter-spacing: -1px;
+            background: linear-gradient(to right, #fff, #94a3b8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        p.subtitle {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            font-weight: 300;
+        }
+
+        /* --- 3. GLASS CARDS --- */
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 30px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .glass-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.5);
+            border-color: var(--glass-highlight);
+        }
+
+        /* --- 4. SECTION: MAIN CLOCKS (WIB, WITA, WIT) --- */
+        .main-clocks {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 60px;
+        }
+
+        .clock-zone {
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .zone-label {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--accent-gold);
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .digital-time {
+            font-size: 3.5rem;
+            font-weight: 700;
+            line-height: 1;
+            margin-bottom: 10px;
+            font-variant-numeric: tabular-nums; /* Agar angka tidak bergeser */
+        }
+
+        .date-display {
+            color: var(--text-secondary);
+            font-size: 1rem;
+        }
+
+        /* --- 5. SECTION: SEARCH & PROVINCE LIST --- */
+        .region-section {
+            margin-bottom: 60px;
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .search-box {
+            position: relative;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 15px 20px 15px 50px;
+            border-radius: 50px;
+            border: 1px solid var(--glass-border);
+            background: rgba(0,0,0,0.2);
+            color: white;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .search-box input:focus {
+            border-color: var(--accent-gold);
+            box-shadow: var(--accent-glow);
+            background: rgba(0,0,0,0.4);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+        }
+
+        .province-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            max-height: 500px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        /* Custom Scrollbar */
+        .province-grid::-webkit-scrollbar {
+            width: 8px;
+        }
+        .province-grid::-webkit-scrollbar-track {
+            background: rgba(255,255,255,0.05);
+            border-radius: 10px;
+        }
+        .province-grid::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.2);
+            border-radius: 10px;
+        }
+
+        .province-card {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            cursor: pointer;
+        }
+
+        .prov-name {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+        .prov-time {
+            font-family: monospace;
+            color: var(--accent-gold);
+        }
+
+        /* --- 6. SECTION: TIME CALCULATOR --- */
+        .calculator-section {
+            animation: fadeInUp 1s ease-out;
+        }
+
+        .calc-wrapper {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            align-items: center;
+        }
+
+        @media (max-width: 768px) {
+            .calc-wrapper { grid-template-columns: 1fr; }
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 15px;
+            background: rgba(0,0,0,0.2);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            color: white;
+            font-size: 1rem;
+            font-family: var(--font-main);
+        }
+        
+        /* Select option styling fix for dark mode */
+        .form-control option {
+            background: #1e1b4b;
+            color: white;
+        }
+
+        .btn-calc {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #fbbf24 0%, #d97706 100%);
+            border: none;
+            border-radius: 12px;
+            color: #0f172a;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: transform 0.2s;
+            box-shadow: var(--accent-glow);
+        }
+
+        .btn-calc:hover {
+            transform: scale(1.02);
+        }
+
+        .result-display {
+            text-align: center;
+            padding: 40px;
+            border: 1px dashed var(--glass-border);
+            border-radius: 20px;
+            background: rgba(0,0,0,0.1);
+        }
+
+        .res-label { font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 10px; }
+        .res-value { font-size: 2.5rem; font-weight: 700; color: #fff; }
+
+        /* Animations */
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        footer {
+            margin-top: 80px;
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            padding-bottom: 20px;
+        }
+        /* --- 7. MOBILE RESPONSIVE FIX (CENTERED) --- */
+@media screen and (max-width: 768px) {
+    
+    .container {
+        width: 100%;
+        max-width: 100%;
+        padding: 30px 20px; /* Padding seimbang kiri-kanan */
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center; /* Memastikan semua anak elemen di tengah */
+    }
+
+    /* Paksa Header ke Tengah */
+    header {
+        width: 100%;
+        text-align: center;
+        margin-bottom: 30px;
+        padding: 0 10px;
+    }
+
+    h1 {
+        font-size: 1.8rem;
+        line-height: 1.2;
+    }
+
+    /* Perbaikan Grid Jam Utama: 1 Kolom Penuh */
+    .main-clocks {
+        display: flex; /* Ubah ke Flex agar lebih mudah diatur vertikal */
+        flex-direction: column;
+        width: 100%;
+        gap: 20px;
+    }
+
+    /* Pastikan Kartu memenuhi lebar container */
+    .glass-card {
+        width: 100%;
+        box-sizing: border-box; /* Penting agar padding tidak melebarkan kartu */
+        margin: 0; /* Reset margin */
+    }
+
+    /* Perbaikan Search Box & List */
+    .region-section, .calculator-section {
+        width: 100%;
+        margin-bottom: 12px;
+    }
+
+    .section-header {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .search-box {
+        width: 100%;
+        margin-top: 15px;
+    }
+
+    .province-grid {
+        grid-template-columns: 1fr; /* 1 Kolom lurus ke bawah */
+    }
+
+    /* Perbaikan Kalkulator */
+    .calc-wrapper {
+        grid-template-columns: 1fr;
+    }
+
+    .form-group, .btn-calc {
+        width: 100%;
+    }
+
+    /* Background Blobs: Perkecil agar tidak mengganggu layout */
+    .blob {
+        opacity: 0.3;
+        transform: scale(0.6); /* Perkecil ukuran blob di HP */
+    }
+}
+    </style>
+</head>
+<body>
+
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+
+    <div class="container">
+        
+        <header>
+            <h1>Nusantara Time</h1>
+            <p class="subtitle">Waktu Standar Indonesia yang Presisi & Elegan</p>
+        </header>
+
+        <section class="main-clocks">
+            <div class="glass-card clock-zone">
+                <div class="zone-label">Indonesia Barat (WIB)</div>
+                <div class="digital-time" id="time-wib">00:00:00</div>
+                <div class="date-display" id="date-wib">Senin, 1 Januari 2024</div>
+                <div style="margin-top:10px; font-size:0.8rem; color:var(--text-secondary)">UTC +7</div>
+            </div>
+            
+            <div class="glass-card clock-zone">
+                <div class="zone-label">Indonesia Tengah (WITA)</div>
+                <div class="digital-time" id="time-wita">00:00:00</div>
+                <div class="date-display" id="date-wita">Senin, 1 Januari 2024</div>
+                <div style="margin-top:10px; font-size:0.8rem; color:var(--text-secondary)">UTC +8</div>
+            </div>
+
+            <div class="glass-card clock-zone">
+                <div class="zone-label">Indonesia Timur (WIT)</div>
+                <div class="digital-time" id="time-wit">00:00:00</div>
+                <div class="date-display" id="date-wit">Senin, 1 Januari 2024</div>
+                <div style="margin-top:10px; font-size:0.8rem; color:var(--text-secondary)">UTC +9</div>
+            </div>
+        </section>
+
+        <section class="region-section glass-card">
+            <div class="section-header">
+                <h2 style="font-size: 1.5rem;">Waktu Lokal Provinsi & Kota</h2>
+                <div class="search-box">
+                    <i class="ph ph-magnifying-glass search-icon"></i>
+                    <input type="text" id="searchInput" placeholder="Cari Provinsi atau Kota...">
+                </div>
+            </div>
+            
+            <div class="province-grid" id="regionList">
+                </div>
+        </section>
+
+        <section class="glass-card calculator-section">
+            <h2 style="margin-bottom: 30px; font-size: 1.5rem;">Kalkulator Waktu</h2>
+            
+            <div class="calc-wrapper">
+                <div class="calc-inputs">
+                    <div class="form-group">
+                        <label>Waktu Awal</label>
+                        <input type="datetime-local" id="calc-start" class="form-control">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Operasi</label>
+                        <select id="calc-operation" class="form-control">
+                            <option value="add">Tambah (+)</option>
+                            <option value="subtract">Kurang (-)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" style="display: flex; gap: 10px;">
+                        <div style="flex:1">
+                            <label>Jam</label>
+                            <input type="number" id="calc-hours" class="form-control" value="0" min="0">
+                        </div>
+                        <div style="flex:1">
+                            <label>Menit</label>
+                            <input type="number" id="calc-minutes" class="form-control" value="0" min="0">
+                        </div>
+                    </div>
+
+                    <button class="btn-calc" onclick="calculateTime()">Hitung Waktu</button>
+                </div>
+
+                <div class="calc-result">
+                    <div class="result-display">
+                        <div class="res-label">Hasil Perhitungan</div>
+                        <div class="res-value" id="calc-result-time">-- : --</div>
+                        <div class="res-label" id="calc-result-date" style="margin-top: 10px;">--/--/----</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <footer>
+            <p>&copy; 2024 Nusantara Time. Created with Premium Code Logic.</p>
+        </footer>
+
+    </div>
+
+    <script>
+        // --- DATASET: Provinsi dan Zona Waktu ---
+        // offset 7 = WIB, 8 = WITA, 9 = WIT
+        const regions = [
+            { name: "Aceh (Banda Aceh)", offset: 7 },
+            { name: "Sumatera Utara (Medan)", offset: 7 },
+            { name: "Sumatera Barat (Padang)", offset: 7 },
+            { name: "Riau (Pekanbaru)", offset: 7 },
+            { name: "Kepulauan Riau (Tanjung Pinang)", offset: 7 },
+            { name: "Jambi", offset: 7 },
+            { name: "Sumatera Selatan (Palembang)", offset: 7 },
+            { name: "Bangka Belitung (Pangkal Pinang)", offset: 7 },
+            { name: "Bengkulu", offset: 7 },
+            { name: "Lampung (Bandar Lampung)", offset: 7 },
+            { name: "DKI Jakarta", offset: 7 },
+            { name: "Jawa Barat (Bandung)", offset: 7 },
+            { name: "Banten (Serang)", offset: 7 },
+            { name: "Jawa Tengah (Semarang)", offset: 7 },
+            { name: "DI Yogyakarta", offset: 7 },
+            { name: "Jawa Timur (Surabaya)", offset: 7 },
+            { name: "Bali (Denpasar)", offset: 8 },
+            { name: "Nusa Tenggara Barat (Mataram)", offset: 8 },
+            { name: "Nusa Tenggara Timur (Kupang)", offset: 8 },
+            { name: "Kalimantan Barat (Pontianak)", offset: 7 },
+            { name: "Kalimantan Tengah (Palangkaraya)", offset: 7 },
+            { name: "Kalimantan Selatan (Banjarmasin)", offset: 8 },
+            { name: "Kalimantan Timur (Samarinda)", offset: 8 },
+            { name: "Kalimantan Utara (Tanjung Selor)", offset: 8 },
+            { name: "Sulawesi Utara (Manado)", offset: 8 },
+            { name: "Gorontalo", offset: 8 },
+            { name: "Sulawesi Tengah (Palu)", offset: 8 },
+            { name: "Sulawesi Barat (Mamuju)", offset: 8 },
+            { name: "Sulawesi Selatan (Makassar)", offset: 8 },
+            { name: "Sulawesi Tenggara (Kendari)", offset: 8 },
+            { name: "Maluku (Ambon)", offset: 9 },
+            { name: "Maluku Utara (Sofifi)", offset: 9 },
+            { name: "Papua (Jayapura)", offset: 9 },
+            { name: "Papua Barat (Manokwari)", offset: 9 },
+            { name: "Papua Selatan (Merauke)", offset: 9 },
+            { name: "Papua Tengah (Nabire)", offset: 9 },
+            { name: "Papua Pegunungan (Wamena)", offset: 9 },
+            { name: "Papua Barat Daya (Sorong)", offset: 9 }
+        ];
+
+        // --- CORE FUNCTIONS ---
+
+        function getIndonesianTime(offset) {
+            // Membuat objek tanggal berdasarkan UTC, lalu adjust jam manual
+            const d = new Date();
+            const utc = d.getTime() + (d.getTimezoneOffset() * 60000);
+            const nd = new Date(utc + (3600000 * offset));
+            return nd;
+        }
+
+        function formatTime(date) {
+            return date.toLocaleTimeString('id-ID', { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' }).replace(/\./g, ':');
+        }
+
+        function formatDate(date) {
+            return date.toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+        }
+
+        // --- 1. UPDATE MAIN CLOCKS ---
+        function updateMainClocks() {
+            const wib = getIndonesianTime(7);
+            const wita = getIndonesianTime(8);
+            const wit = getIndonesianTime(9);
+
+            document.getElementById('time-wib').innerText = formatTime(wib);
+            document.getElementById('date-wib').innerText = formatDate(wib);
+
+            document.getElementById('time-wita').innerText = formatTime(wita);
+            document.getElementById('date-wita').innerText = formatDate(wita);
+
+            document.getElementById('time-wit').innerText = formatTime(wit);
+            document.getElementById('date-wit').innerText = formatDate(wit);
+        }
+
+        // --- 2. RENDER REGION LIST ---
+        const regionListEl = document.getElementById('regionList');
+
+        function renderRegions(filterText = "") {
+            regionListEl.innerHTML = ""; // Clear existing
+            
+            regions.forEach(region => {
+                if(region.name.toLowerCase().includes(filterText.toLowerCase())) {
+                    const time = getIndonesianTime(region.offset);
+                    const timeStr = time.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }).replace(/\./g, ':');
+                    
+                    const div = document.createElement('div');
+                    div.className = 'glass-card province-card';
+                    div.innerHTML = `
+                        <span class="prov-name">${region.name}</span>
+                        <span class="prov-time">${timeStr}</span>
+                    `;
+                    regionListEl.appendChild(div);
+                }
+            });
+        }
+
+        // Search Listener
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            renderRegions(e.target.value);
+        });
+
+        // Update list time every minute (less frequent than seconds) to save performance
+        setInterval(() => {
+            renderRegions(document.getElementById('searchInput').value);
+        }, 60000);
+
+
+        // --- 3. CALCULATOR LOGIC ---
+        // Set default value to current local time
+        const now = new Date();
+        now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+        document.getElementById('calc-start').value = now.toISOString().slice(0,16);
+
+        function calculateTime() {
+            const startInput = document.getElementById('calc-start').value;
+            const op = document.getElementById('calc-operation').value;
+            const hours = parseInt(document.getElementById('calc-hours').value) || 0;
+            const minutes = parseInt(document.getElementById('calc-minutes').value) || 0;
+
+            if (!startInput) return;
+
+            let date = new Date(startInput);
+
+            // Logic Tambah / Kurang
+            const totalMinutesToAdd = (hours * 60) + minutes;
+            
+            if (op === 'add') {
+                date.setMinutes(date.getMinutes() + totalMinutesToAdd);
+            } else {
+                date.setMinutes(date.getMinutes() - totalMinutesToAdd);
+            }
+
+            // Render Result
+            const resultTime = date.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }).replace(/\./g, ':');
+            const resultDate = date.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+
+            document.getElementById('calc-result-time').innerText = resultTime;
+            document.getElementById('calc-result-date').innerText = resultDate;
+        }
+
+        // --- INITIALIZATION ---
+        setInterval(updateMainClocks, 1000); // Detik berjalan
+        updateMainClocks(); // Run immediately
+        renderRegions(); // Initial render
+
+    </script>
+</body>
+</html>
